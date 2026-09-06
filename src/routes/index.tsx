@@ -185,16 +185,16 @@ function Index() {
 
       {/* ── Hero ── */}
       <section className="hero-surface relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-20 lg:grid-cols-2 lg:py-28">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 sm:px-5 sm:py-20 lg:grid-cols-2 lg:py-28">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary-foreground">
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-primary-foreground sm:px-4">
               {banner.promoTagline || "India ka #1 Truck Booking Platform"}
             </span>
-            <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-primary-foreground md:text-6xl">
+            <h1 className="mt-5 font-display text-3xl font-extrabold leading-[1.08] tracking-tight text-primary-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               Book a truck in
               <span className="block bg-clip-text text-accent">under 5 minutes</span>
             </h1>
-            <p className="mt-4 text-sm font-medium text-primary-foreground/70">
+            <p className="mt-3 text-sm font-medium text-primary-foreground/70">
               {banner.promoSubtitle || "Trusted by 50,000+ Businesses Across India"}
             </p>
 
@@ -266,21 +266,28 @@ function Index() {
             </div>
           </div>
 
-          <div className="relative hidden lg:block">
-            <div className="animate-cruise overflow-hidden rounded-3xl">
+          {/* Hero Video — stacks below booking card on mobile, side-by-side on lg+ */}
+          <div className="relative mt-4 overflow-hidden rounded-3xl lg:mt-0">
+            <div className="lg:animate-cruise">
               <video
                 src="/hero-video.mp4"
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-[600px] rounded-3xl shadow-[var(--shadow-elevated)] object-cover"
+                className="w-full aspect-video lg:aspect-auto lg:h-[520px] rounded-3xl shadow-[var(--shadow-elevated)] object-cover"
               />
             </div>
-            <div className="animate-float-soft absolute -bottom-6 left-4 rounded-2xl bg-card px-5 py-4 shadow-[var(--shadow-card)]">
+            {/* Floating badge — only on desktop where there's enough space */}
+            <div className="hidden lg:block animate-float-soft absolute -bottom-6 left-4 rounded-2xl bg-card px-5 py-4 shadow-[var(--shadow-card)]">
               <p className="text-xs font-semibold text-muted-foreground">Live shipment</p>
               <p className="font-display text-lg font-bold text-foreground">Delhi → Jaipur</p>
               <p className="text-xs font-semibold text-accent-foreground">Arriving in 3h 20m</p>
+            </div>
+            {/* Mobile badge — inline at bottom of video, no absolute positioning */}
+            <div className="lg:hidden absolute bottom-3 left-3 rounded-xl bg-card/90 backdrop-blur px-3 py-2 shadow-md">
+              <p className="font-display text-sm font-bold text-foreground">Delhi → Jaipur</p>
+              <p className="text-[11px] font-semibold text-accent-foreground">Arriving in 3h 20m</p>
             </div>
           </div>
         </div>
@@ -293,41 +300,41 @@ function Index() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="mx-auto max-w-7xl px-5 py-14">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-5 sm:py-14">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 sm:gap-4">
           {stats.map((s) => (
-            <div key={s.label} className="card-elevated rounded-2xl p-6 text-center">
-              <p className="font-display text-4xl font-extrabold text-primary">{s.value}</p>
-              <p className="mt-1 text-sm font-medium text-muted-foreground">{s.label}</p>
+            <div key={s.label} className="card-elevated rounded-2xl p-4 text-center sm:p-6">
+              <p className="font-display text-2xl font-extrabold text-primary sm:text-4xl">{s.value}</p>
+              <p className="mt-1 text-xs font-medium text-muted-foreground sm:text-sm">{s.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── Live Route & Transit Weather Intelligence ── */}
-      <section id="weather-section" className="mx-auto max-w-7xl px-5 py-8">
+      <section id="weather-section" className="mx-auto max-w-7xl px-4 py-6 sm:px-5 sm:py-8">
         <WeatherWidget city={pickupCity} onCityChange={setPickupCity} />
       </section>
 
       {/* ── Services ── */}
-      <section id="services" className="mx-auto max-w-7xl px-5 py-16">
-        <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground">
+      <section id="services" className="mx-auto max-w-7xl px-4 py-12 sm:px-5 sm:py-16">
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
           What we move for you
         </h2>
-        <p className="mt-3 max-w-xl text-muted-foreground">
+        <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
           One partner for every kind of load, from a single pallet to a full trailer.
         </p>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-3">
           {services.map((s) => (
             <Link
               key={s.title}
               to={s.href || "/booking"}
-              className="card-elevated rounded-3xl p-8 block"
+              className="card-elevated rounded-3xl p-6 block sm:p-8"
             >
-              <span className="accent-surface inline-flex h-14 w-14 items-center justify-center rounded-2xl">
-                <s.icon className="h-7 w-7 text-accent-foreground" />
+              <span className="accent-surface inline-flex h-12 w-12 items-center justify-center rounded-2xl sm:h-14 sm:w-14">
+                <s.icon className="h-6 w-6 text-accent-foreground sm:h-7 sm:w-7" />
               </span>
-              <h3 className="mt-6 font-display text-xl font-bold text-foreground">{s.title}</h3>
+              <h3 className="mt-5 font-display text-lg font-bold text-foreground sm:mt-6 sm:text-xl">{s.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.text}</p>
             </Link>
           ))}
@@ -335,35 +342,35 @@ function Index() {
       </section>
 
       {/* ── Why Choose Us — Comparison Table ── */}
-      <section className="bg-secondary/60 py-20">
-        <div className="mx-auto max-w-7xl px-5">
-          <h2 className="text-center font-display text-4xl font-extrabold tracking-tight text-foreground">
+      <section className="bg-secondary/60 py-14 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-5">
+          <h2 className="text-center font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Why choose City Cargo?
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-muted-foreground">
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-muted-foreground">
             With 26+ lakh GPS-enabled trucks delivering top features for you.
           </p>
 
           {/* Comparison table */}
-          <div className="mx-auto mt-10 max-w-2xl overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
-            <div className="grid grid-cols-[1fr_120px_120px] items-center border-b border-border px-6 py-4">
+          <div className="mx-auto mt-8 max-w-2xl overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
+            <div className="grid grid-cols-[1fr_80px_80px] items-center border-b border-border px-4 py-3 sm:grid-cols-[1fr_120px_120px] sm:px-6 sm:py-4">
               <span />
-              <span className="text-center font-display text-sm font-bold text-primary">
+              <span className="text-center font-display text-xs font-bold text-primary sm:text-sm">
                 City Cargo
               </span>
-              <span className="text-center text-sm font-bold text-muted-foreground">Others</span>
+              <span className="text-center text-xs font-bold text-muted-foreground sm:text-sm">Others</span>
             </div>
             {comparison.map((item, i) => (
               <div
                 key={item}
-                className={`grid grid-cols-[1fr_120px_120px] items-center px-6 py-4 ${i % 2 === 0 ? "bg-secondary/40" : ""}`}
+                className={`grid grid-cols-[1fr_80px_80px] items-center px-4 py-3 sm:grid-cols-[1fr_120px_120px] sm:px-6 sm:py-4 ${i % 2 === 0 ? "bg-secondary/40" : ""}`}
               >
-                <span className="text-sm font-semibold text-foreground">{item}</span>
+                <span className="text-xs font-semibold text-foreground sm:text-sm">{item}</span>
                 <span className="flex justify-center">
-                  <CheckCircle2 className="h-6 w-6 text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-green-500 sm:h-6 sm:w-6" />
                 </span>
                 <span className="flex justify-center">
-                  <XCircle className="h-6 w-6 text-foreground/30" />
+                  <XCircle className="h-5 w-5 text-foreground/30 sm:h-6 sm:w-6" />
                 </span>
               </div>
             ))}
@@ -372,32 +379,32 @@ function Index() {
       </section>
 
       {/* ── Goods Insurance Banner ── */}
-      <section className="bg-[oklch(0.2_0.04_258)] py-16">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 px-5 md:flex-row md:justify-between">
-          <div>
-            <h2 className="font-display text-3xl font-extrabold text-white md:text-4xl">
+      <section className="bg-[oklch(0.2_0.04_258)] py-12 sm:py-16">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 sm:px-5 md:flex-row md:justify-between md:gap-8">
+          <div className="text-center md:text-left">
+            <h2 className="font-display text-2xl font-extrabold text-white sm:text-3xl md:text-4xl">
               Up to ₹50 Lakh+ Coverage for Your Goods
             </h2>
-            <p className="mt-1 text-lg font-bold text-accent">Starting at Just ₹299</p>
+            <p className="mt-1 text-base font-bold text-accent sm:text-lg">Starting at Just ₹299</p>
             <p className="mt-3 text-sm text-white/60">
               Comprehensive goods-in-transit insurance powered by top insurers. Opt in during
               booking.
             </p>
           </div>
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-blue-400/20">
-            <Shield className="h-14 w-14 text-blue-300" />
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-blue-400/20 sm:h-24 sm:w-24">
+            <Shield className="h-12 w-12 text-blue-300 sm:h-14 sm:w-14" />
           </div>
         </div>
       </section>
 
       {/* ── Video Showcase Section (Full Width Left to Right) ── */}
-      <section className="w-full py-16">
-        <div className="mx-auto max-w-7xl px-5 text-center">
+      <section className="w-full py-10 sm:py-16">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-5">
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-primary">
             <Play className="h-3.5 w-3.5 fill-primary text-primary" />
             <span>Watch Demo</span>
           </div>
-          <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+          <h2 className="mt-4 font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
             See City Cargo in Action
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -407,7 +414,7 @@ function Index() {
         </div>
 
         {/* Full-width Edge-to-Edge Video Container */}
-        <div className="relative mt-10 w-full overflow-hidden bg-black shadow-2xl">
+        <div className="relative mt-8 w-full overflow-hidden bg-black shadow-2xl">
           <video
             src="/showcase-video.mp4"
             autoPlay
@@ -415,50 +422,50 @@ function Index() {
             loop
             playsInline
             disablePictureInPicture
-            className="h-auto w-full aspect-video max-h-[85vh] object-cover pointer-events-none select-none"
+            className="w-full aspect-video object-cover pointer-events-none select-none"
           />
         </div>
 
         {/* Feature Highlights beneath video */}
-        <div className="mx-auto mt-10 max-w-7xl px-5">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <div className="card-elevated flex items-center gap-3 rounded-2xl p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Truck className="h-5 w-5" />
+        <div className="mx-auto mt-6 max-w-7xl px-4 sm:mt-10 sm:px-5">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+            <div className="card-elevated flex items-center gap-2 rounded-2xl p-3 sm:gap-3 sm:p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-10 sm:w-10">
+                <Truck className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <p className="font-display text-sm font-bold text-foreground">Verified Trucks</p>
-                <p className="text-xs text-muted-foreground">Pan-India fleet</p>
+                <p className="font-display text-xs font-bold text-foreground sm:text-sm">Verified Trucks</p>
+                <p className="text-[11px] text-muted-foreground sm:text-xs">Pan-India fleet</p>
               </div>
             </div>
 
-            <div className="card-elevated flex items-center gap-3 rounded-2xl p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <MapPin className="h-5 w-5" />
+            <div className="card-elevated flex items-center gap-2 rounded-2xl p-3 sm:gap-3 sm:p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-10 sm:w-10">
+                <MapPin className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <p className="font-display text-sm font-bold text-foreground">Live GPS</p>
-                <p className="text-xs text-muted-foreground">Real-time status</p>
+                <p className="font-display text-xs font-bold text-foreground sm:text-sm">Live GPS</p>
+                <p className="text-[11px] text-muted-foreground sm:text-xs">Real-time status</p>
               </div>
             </div>
 
-            <div className="card-elevated flex items-center gap-3 rounded-2xl p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <FileText className="h-5 w-5" />
+            <div className="card-elevated flex items-center gap-2 rounded-2xl p-3 sm:gap-3 sm:p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-10 sm:w-10">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <p className="font-display text-sm font-bold text-foreground">Digital e-Bilty</p>
-                <p className="text-xs text-muted-foreground">Instant POD docs</p>
+                <p className="font-display text-xs font-bold text-foreground sm:text-sm">Digital e-Bilty</p>
+                <p className="text-[11px] text-muted-foreground sm:text-xs">Instant POD docs</p>
               </div>
             </div>
 
-            <div className="card-elevated flex items-center gap-3 rounded-2xl p-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <ShieldCheck className="h-5 w-5" />
+            <div className="card-elevated flex items-center gap-2 rounded-2xl p-3 sm:gap-3 sm:p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-10 sm:w-10">
+                <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div>
-                <p className="font-display text-sm font-bold text-foreground">Transit Cover</p>
-                <p className="text-xs text-muted-foreground">Up to ₹50L+ safe</p>
+                <p className="font-display text-xs font-bold text-foreground sm:text-sm">Transit Cover</p>
+                <p className="text-[11px] text-muted-foreground sm:text-xs">Up to ₹50L+ safe</p>
               </div>
             </div>
           </div>
@@ -466,16 +473,16 @@ function Index() {
       </section>
 
       {/* ── Why us features grid ── */}
-      <section className="bg-secondary/60 py-20">
-        <div className="mx-auto max-w-7xl px-5">
-          <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground">
+      <section className="bg-secondary/60 py-14 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-5">
+          <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Built for reliability
           </h2>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <div key={f.title} className="card-elevated rounded-2xl p-6">
-                <f.icon className="h-8 w-8 text-primary" />
-                <h3 className="mt-4 font-display text-lg font-bold text-foreground">{f.title}</h3>
+              <div key={f.title} className="card-elevated rounded-2xl p-5 sm:p-6">
+                <f.icon className="h-7 w-7 text-primary sm:h-8 sm:w-8" />
+                <h3 className="mt-4 font-display text-base font-bold text-foreground sm:text-lg">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{f.text}</p>
               </div>
             ))}
@@ -484,13 +491,13 @@ function Index() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="mx-auto max-w-7xl px-5 py-20">
-        <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-5 sm:py-20">
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
           Loved by shippers
         </h2>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((t) => (
-            <div key={t.name} className="card-elevated rounded-3xl p-7">
+            <div key={t.name} className="card-elevated rounded-3xl p-5 sm:p-7">
               <div className="flex gap-1">
                 {Array.from({ length: t.rating }).map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-accent text-accent" />
@@ -505,16 +512,16 @@ function Index() {
       </section>
 
       {/* ── Download App ── */}
-      <section className="bg-secondary/60 py-16">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-8 px-5 text-center md:flex-row md:text-left">
-          <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-3xl bg-primary/10">
-            <Smartphone className="h-16 w-16 text-primary" />
+      <section className="bg-secondary/60 py-12 sm:py-16">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 text-center sm:px-5 sm:gap-8 md:flex-row md:text-left">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl bg-primary/10 sm:h-32 sm:w-32">
+            <Smartphone className="h-12 w-12 text-primary sm:h-16 sm:w-16" />
           </div>
           <div>
-            <h2 className="font-display text-3xl font-extrabold tracking-tight text-foreground">
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
               Download the City Cargo App
             </h2>
-            <p className="mt-2 max-w-xl text-muted-foreground">
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
               Book trucks, track shipments, and manage payments on the go. Available on Android and
               iOS.
             </p>
@@ -531,19 +538,19 @@ function Index() {
       </section>
 
       {/* ── Popular Cities ── */}
-      <section className="mx-auto max-w-7xl px-5 py-16">
-        <h2 className="font-display text-4xl font-extrabold tracking-tight text-foreground">
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-5 sm:py-16">
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
           Transport services across India
         </h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-6">
           {popularCities.map((c) => (
             <Link
               key={c.name}
               to="/ts/$city"
               params={{ city: c.name.toLowerCase() }}
-              className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground transition-all hover:border-primary/40 hover:shadow-[var(--shadow-card)]"
+              className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground transition-all hover:border-primary/40 hover:shadow-[var(--shadow-card)] sm:px-4 sm:py-3"
             >
-              <MapPin className="h-4 w-4 text-accent" />
+              <MapPin className="h-3.5 w-3.5 text-accent sm:h-4 sm:w-4" />
               {c.name}
             </Link>
           ))}
@@ -551,7 +558,7 @@ function Index() {
       </section>
 
       {/* ── Bank Employee Special Discount ── */}
-      <section className="relative overflow-hidden bg-[oklch(0.16_0.04_260)] py-20">
+      <section className="relative overflow-hidden bg-[oklch(0.16_0.04_260)] py-14 sm:py-20">
         {/* Subtle grid pattern overlay */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.03]"
@@ -562,49 +569,54 @@ function Index() {
           }}
         />
 
-        <div className="relative mx-auto max-w-7xl px-5">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-5">
+          <div className="grid min-w-0 w-full max-w-full items-center gap-8 sm:gap-12 lg:grid-cols-2">
             {/* ── Left: Video ── */}
-            <div className="animate-fade-in-up relative">
-              <div className="overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-                <video
-                  src="/new client.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  disablePictureInPicture
-                  className="aspect-video w-full object-cover pointer-events-none select-none"
-                />
-              </div>
-              {/* Floating badge on video */}
-              <div className="absolute -bottom-4 -right-4 flex h-20 w-20 items-center justify-center rounded-full bg-accent badge-pulse-glow lg:-right-6">
-                <div className="text-center">
-                  <p className="font-display text-xl font-extrabold leading-none text-accent-foreground">
-                    15%
-                  </p>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-accent-foreground/80">
-                    OFF
-                  </p>
+            <div className="w-full min-w-0 max-w-full">
+              {/* Outer relative wrapper — badge positioned here, NOT inside overflow-hidden */}
+              <div className="relative w-full max-w-full">
+                {/* Video container — overflow-hidden only for rounded corners */}
+                <div className="relative w-full aspect-video overflow-hidden rounded-2xl border border-white/10 shadow-2xl bg-gray-900 sm:rounded-3xl">
+                  <video
+                    src="/new-client.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    disablePictureInPicture
+                    className="w-full h-full block object-cover pointer-events-none select-none"
+                  />
+                </div>
+                {/* 15% badge — outside overflow-hidden, always visible */}
+                <div className="absolute bottom-3 right-3 z-10 flex h-14 w-14 items-center justify-center rounded-full bg-accent badge-pulse-glow sm:h-20 sm:w-20">
+                  <div className="text-center">
+                    <p className="font-display text-base font-extrabold leading-none text-accent-foreground sm:text-xl">
+                      15%
+                    </p>
+                    <p className="text-[8px] font-bold uppercase tracking-wider text-accent-foreground/80 sm:text-[10px]">
+                      OFF
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* ── Right: Details ── */}
-            <div className="animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+            <div className="w-full min-w-0 max-w-full overflow-hidden">
               <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-accent">
                 <Gift className="h-3.5 w-3.5" />
                 Exclusive Offer
               </span>
 
-              <h2 className="mt-5 font-display text-3xl font-extrabold leading-tight tracking-tight text-white md:text-4xl lg:text-[2.75rem]">
+              <h2 className="mt-5 font-display text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl md:text-4xl lg:text-[2.75rem] break-words">
                 Special discount for{" "}
                 <span className="bg-gradient-to-r from-accent to-[oklch(0.85_0.15_80)] bg-clip-text text-transparent">
                   bank employees
                 </span>
               </h2>
 
-              <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/60 md:text-base">
+              <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/60 md:text-base break-words">
                 We value government and banking professionals. All bank employees across India
                 get an exclusive <strong className="text-white">flat 15% discount</strong> on
                 full truck load bookings. Just verify your employee ID and start saving.
@@ -642,12 +654,12 @@ function Index() {
               <BankDiscountForm open={showBankForm} onOpenChange={setShowBankForm} />
 
               {/* ── Animated Bank Logos Marquee ── */}
-              <div className="mt-10">
+              <div className="mt-10 w-full min-w-0 max-w-full overflow-hidden">
                 <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-white/40">
                   Trusted by employees of
                 </p>
 
-                <div className="space-y-3 overflow-hidden">
+                <div className="space-y-3 w-full min-w-0 max-w-full overflow-hidden">
                   {/* Row 1 — scrolls left */}
                   <div className="bank-marquee">
                     {[...Array(2)].map((_, setIdx) => (
@@ -714,21 +726,21 @@ function Index() {
 
       {/* ── CTA ── */}
       <section className="hero-surface relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-5 py-20 text-center">
-          <h2 className="font-display text-4xl font-extrabold tracking-tight text-primary-foreground md:text-5xl">
+        <div className="mx-auto max-w-7xl px-4 py-14 text-center sm:px-5 sm:py-20">
+          <h2 className="font-display text-2xl font-extrabold tracking-tight text-primary-foreground sm:text-4xl md:text-5xl">
             Your next load is one tap away
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
+          <p className="mx-auto mt-4 max-w-xl text-sm text-primary-foreground/80 sm:text-base">
             Tell us where it's going. We'll find the right truck at the right price.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/booking" search={{ from: "", to: "" }}>
-              <Button variant="cta" size="xl">
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+            <Link to="/booking" search={{ from: "", to: "" }} className="w-full sm:w-auto">
+              <Button variant="cta" size="xl" className="w-full sm:w-auto">
                 Book a truck
               </Button>
             </Link>
-            <Link to="/ptl">
-              <Button variant="soft" size="xl">
+            <Link to="/ptl" className="w-full sm:w-auto">
+              <Button variant="soft" size="xl" className="w-full sm:w-auto">
                 Part load rates
               </Button>
             </Link>

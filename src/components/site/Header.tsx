@@ -28,7 +28,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/90 backdrop-blur">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-5">
         {/* Logo */}
         <Logo />
 
@@ -123,7 +123,7 @@ export function Header() {
           </Link>
 
           <Link to="/booking" search={{ from: "", to: "" }}>
-            <Button variant="cta" size="lg">
+            <Button variant="cta" size="sm" className="text-xs sm:text-sm sm:size-default">
               Book a Truck
             </Button>
           </Link>

@@ -143,18 +143,45 @@
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   * {
     border-color: var(--color-border);
   }
 
+  html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
+    width: 100%;
+    max-width: 100%;
     background-color: var(--color-background);
     color: var(--color-foreground);
+    overflow-x: hidden;
   }
 }
 
 @theme inline {
   --color-primary-glow: var(--primary-glow);
+}
+
+/* ── Disable motion-causing animations on mobile to prevent overflow ── */
+@media (max-width: 1023px) {
+  .animate-cruise {
+    animation: none !important;
+    transform: none !important;
+  }
+  .animate-float-soft {
+    animation: none !important;
+    transform: none !important;
+  }
 }
 
 @utility road-track {

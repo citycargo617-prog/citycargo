@@ -148,17 +148,17 @@ function BookingPage() {
     <div className="min-h-screen bg-background font-sans">
       <Header />
 
-      <div className="mx-auto max-w-4xl px-5 py-10">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-5 sm:py-10">
         {/* Step indicator */}
         {step <= 4 && (
-          <div className="mb-10 flex items-center justify-center gap-2">
+          <div className="mb-8 flex items-center justify-center gap-1.5 sm:gap-2">
             {steps.map((s, i) => (
-              <div key={s.num} className="flex items-center gap-2">
+              <div key={s.num} className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() => {
                     if (s.num < step) setStep(s.num);
                   }}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full font-display font-bold transition-all ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-full font-display font-bold transition-all sm:h-10 sm:w-10 ${
                     s.num === step
                       ? "bg-primary text-primary-foreground scale-110"
                       : s.num < step
@@ -166,15 +166,15 @@ function BookingPage() {
                         : "bg-secondary text-muted-foreground"
                   }`}
                 >
-                  {s.num < step ? <CheckCircle2 className="h-5 w-5" /> : s.num}
+                  {s.num < step ? <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" /> : s.num}
                 </button>
                 <span
-                  className={`hidden text-sm font-semibold sm:block ${s.num === step ? "text-primary" : "text-muted-foreground"}`}
+                  className={`hidden text-xs font-semibold sm:block sm:text-sm ${s.num === step ? "text-primary" : "text-muted-foreground"}`}
                 >
                   {s.label}
                 </span>
                 {i < steps.length - 1 && (
-                  <div className={`h-0.5 w-8 ${s.num < step ? "bg-green-500" : "bg-border"}`} />
+                  <div className={`h-0.5 w-5 sm:w-8 ${s.num < step ? "bg-green-500" : "bg-border"}`} />
                 )}
               </div>
             ))}
@@ -183,7 +183,7 @@ function BookingPage() {
 
         {/* Step 1: Route */}
         {step === 1 && (
-          <div className="rounded-3xl border border-border bg-card p-8 shadow-[var(--shadow-card)]">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)] sm:p-8">
             <div className="flex items-center gap-3">
               <MapPin className="h-6 w-6 text-primary" />
               <h2 className="font-display text-2xl font-bold text-foreground">Select Route</h2>

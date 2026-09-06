@@ -177,7 +177,7 @@ export function WeatherWidget({
       />
 
       {/* Top Header Section */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-border/50 pb-5">
+      <div className="relative z-10 flex flex-col gap-3 border-b border-border/50 pb-5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -187,7 +187,7 @@ export function WeatherWidget({
               Live Logistics Weather Intelligence
             </span>
           </div>
-          <h3 className="mt-1 font-display text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
+          <h3 className="mt-1 font-display text-xl font-extrabold tracking-tight text-foreground md:text-3xl">
             Route & Transit Weather Forecast
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -196,9 +196,9 @@ export function WeatherWidget({
         </div>
 
         {/* Action Controls: Direct Search & GPS Locate */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {/* Quick City Search Field */}
-          <div ref={searchRef} className="relative">
+          <div ref={searchRef} className="relative flex-1 sm:flex-none">
             <div className="relative flex items-center">
               <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               <input
@@ -219,7 +219,7 @@ export function WeatherWidget({
                     handleSelectCity(searchQuery.trim());
                   }
                 }}
-                className="h-9 w-40 sm:w-48 rounded-xl border border-border bg-background/80 pl-8 pr-3 text-xs font-medium text-foreground outline-none transition-all focus:w-56 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="h-9 w-full sm:w-40 rounded-xl border border-border bg-background/80 pl-8 pr-3 text-xs font-medium text-foreground outline-none transition-all focus:sm:w-56 focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </div>
 
