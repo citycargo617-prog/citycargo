@@ -108,6 +108,15 @@ export function Header() {
         <div className="flex items-center gap-3">
           <HeaderWeatherBadge />
 
+          {/* Direct call button for mobile */}
+          <a
+            href="tel:+919651429006"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/15 text-accent sm:hidden hover:bg-accent/25 transition-colors"
+            aria-label="Call City Cargo"
+          >
+            <Phone className="h-4 w-4" />
+          </a>
+
           <a
             href="tel:+919651429006"
             className="hidden items-center gap-2 text-sm font-semibold text-foreground sm:flex lg:hidden xl:flex"
@@ -177,19 +186,21 @@ export function Header() {
               I'm Truck Owner
             </Link>
             <Link
-              to="/admin"
-              className="rounded-lg px-4 py-3 text-sm font-semibold text-primary hover:bg-primary/10"
-              onClick={() => setMobileOpen(false)}
-            >
-              🔐 Admin Control Center
-            </Link>
-            <Link
               to="/careers"
               className="rounded-lg px-4 py-3 text-sm font-semibold text-foreground hover:bg-secondary"
               onClick={() => setMobileOpen(false)}
             >
               Careers
             </Link>
+
+            <a
+              href="tel:+919651429006"
+              className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-accent-foreground shadow-sm hover:bg-accent/90 transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              <Phone className="h-4 w-4" />
+              Call Dispatch: +91 96514 29006
+            </a>
 
             <div className="mt-4 border-t border-border pt-4">
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">

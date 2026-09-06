@@ -19,6 +19,7 @@ import {
   Smartphone,
   Play,
   Gift,
+  Phone,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -31,6 +32,7 @@ import { popularCities } from "@/lib/data/cities";
 import { useAdminData } from "@/lib/admin-store";
 import { BankDiscountForm } from "@/components/site/BankDiscountForm";
 import { WhatsAppFloatingButton } from "@/components/site/WhatsAppFloatingButton";
+import { CallFloatingButton } from "@/components/site/CallFloatingButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -242,6 +244,14 @@ function Index() {
                 >
                   Get price estimate <ArrowRight className="h-4 w-4" />
                 </Button>
+
+                <a
+                  href="tel:+919651429006"
+                  className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-accent px-4 font-display text-sm font-bold text-accent-foreground shadow-md shadow-accent/20 hover:bg-accent/90 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>Call Now</span>
+                </a>
 
                 <a
                   href={`https://wa.me/919651429006?text=${encodeURIComponent(
@@ -752,6 +762,7 @@ function Index() {
         </div>
       </section>
 
+      <CallFloatingButton />
       <WhatsAppFloatingButton fromCity={pickupCity} toCity={dropCity} />
       <Footer />
     </div>

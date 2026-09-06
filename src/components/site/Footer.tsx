@@ -7,7 +7,6 @@ const quickLinks = [
   { label: "Part Load", href: "/ptl" as const, search: undefined },
   { label: "Buy GPS Tracker", href: "/buy-gps" as const, search: undefined },
   { label: "Truck Owner Login", href: "/truck-owner/login" as const, search: undefined },
-  { label: "Admin Portal", href: "/admin" as const, search: undefined },
   { label: "Careers", href: "/careers" as const, search: undefined },
 ];
 
