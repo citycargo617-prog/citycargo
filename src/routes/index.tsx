@@ -554,12 +554,6 @@ function Index() {
                   <Download className="mr-2 h-5 w-5" /> Install App
                 </Button>
               )}
-              <Button variant="outline" size="lg" className="border-border/80">
-                <Smartphone className="mr-2 h-4 w-4" /> Google Play
-              </Button>
-              <Button variant="soft" size="lg">
-                <Smartphone className="mr-2 h-4 w-4" /> App Store
-              </Button>
             </div>
             {isReady && !isInstalled && isIOS && (
               <p className="mt-2 text-xs text-muted-foreground">
