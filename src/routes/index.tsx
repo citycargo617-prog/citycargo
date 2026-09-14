@@ -20,6 +20,7 @@ import {
   Play,
   Gift,
   Phone,
+  Download,
 } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -33,6 +34,8 @@ import { useAdminData } from "@/lib/admin-store";
 import { BankDiscountForm } from "@/components/site/BankDiscountForm";
 import { WhatsAppFloatingButton } from "@/components/site/WhatsAppFloatingButton";
 import { CallFloatingButton } from "@/components/site/CallFloatingButton";
+import { usePWA } from "@/hooks/usePWA";
+import { InstallAppModal } from "@/components/site/InstallAppModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -163,6 +166,7 @@ function Index() {
   const [dropCity, setDropCity] = useState("");
   const [showBankForm, setShowBankForm] = useState(false);
   const [showEstimate, setShowEstimate] = useState(false);
+  const { isInstalled, isIOS, showIOSModal, setShowIOSModal, installApp, isReady } = usePWA();
 
   function handleGetEstimate() {
     setShowEstimate(true);
@@ -521,7 +525,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ── Download App ── */}
+      {/* ── Download App / PWA Install ── */}
       <section className="bg-secondary/60 py-12 sm:py-16">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-4 text-center sm:px-5 sm:gap-8 md:flex-row md:text-left">
           <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl bg-primary/10 sm:h-32 sm:w-32">
@@ -532,19 +536,39 @@ function Index() {
               Download the City Cargo App
             </h2>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Book trucks, track shipments, and manage payments on the go. Available on Android and
-              iOS.
+              Book trucks, track shipments, and manage payments on the go. Install directly to your device or get it on mobile app stores.
             </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-3 md:justify-start">
-              <Button variant="cta" size="lg">
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+              {isReady && isInstalled ? (
+                <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 px-5 py-3 text-sm font-semibold text-emerald-700 dark:text-emerald-400 shadow-sm">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  App Installed
+                </div>
+              ) : (
+                <Button
+                  variant="cta"
+                  size="lg"
+                  onClick={installApp}
+                  className="shadow-md hover:shadow-lg font-bold transition-all transform active:scale-95"
+                >
+                  <Download className="mr-2 h-5 w-5" /> Install App
+                </Button>
+              )}
+              <Button variant="outline" size="lg" className="border-border/80">
                 <Smartphone className="mr-2 h-4 w-4" /> Google Play
               </Button>
               <Button variant="soft" size="lg">
                 <Smartphone className="mr-2 h-4 w-4" /> App Store
               </Button>
             </div>
+            {isReady && !isInstalled && isIOS && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                iPhone / iPad user? Tap "Install App" to view our 3-step home screen installation guide.
+              </p>
+            )}
           </div>
         </div>
+        <InstallAppModal open={showIOSModal} onOpenChange={setShowIOSModal} />
       </section>
 
       {/* ── Popular Cities ── */}
