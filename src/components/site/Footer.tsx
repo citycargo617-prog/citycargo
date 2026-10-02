@@ -1,6 +1,7 @@
 import { Truck, Phone, Mail, MapPin } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/site/Logo";
+import { HELPLINE_NUMBERS } from "@/lib/constants/contact";
 
 const quickLinks = [
   { label: "Book a Truck", href: "/booking" as const, search: { from: "", to: "" } },
@@ -44,17 +45,27 @@ export function Footer() {
             GPS tracking on every load.
           </p>
           <div className="mt-6 flex flex-col gap-3">
-            <a
-              href="tel:+919651429006"
-              className="flex items-center gap-2 text-sm text-white/70 hover:text-accent transition-colors"
-            >
-              <Phone className="h-4 w-4 text-accent" /> +91 96514 29006
-            </a>
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">
+                24x7 Helplines
+              </span>
+              {HELPLINE_NUMBERS.map((item) => (
+                <a
+                  key={item.tel}
+                  href={item.tel}
+                  className="flex items-center gap-2 text-sm text-white/70 hover:text-accent transition-colors"
+                >
+                  <Phone className="h-3.5 w-3.5 text-accent shrink-0" />
+                  <span>{item.display}</span>
+                  <span className="text-[11px] text-white/40">({item.label})</span>
+                </a>
+              ))}
+            </div>
             <a
               href="mailto:support@citycargo.in"
-              className="flex items-center gap-2 text-sm text-white/70 hover:text-accent transition-colors"
+              className="flex items-center gap-2 text-sm text-white/70 hover:text-accent transition-colors pt-1"
             >
-              <Mail className="h-4 w-4 text-accent" /> support@citycargo.in
+              <Mail className="h-4 w-4 text-accent shrink-0" /> support@citycargo.in
             </a>
             <span className="flex items-start gap-2 text-sm text-white/70">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />

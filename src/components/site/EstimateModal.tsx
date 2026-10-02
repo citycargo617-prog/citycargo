@@ -3,6 +3,7 @@ import { X, Truck, Phone, ArrowRight, Package } from "lucide-react";
 import { useAdminData, calculateDynamicPrice, getStoredRoutePricing } from "@/lib/admin-store";
 import type { TruckItem } from "@/lib/admin-store";
 import { Link } from "@tanstack/react-router";
+import { PRIMARY_PHONE } from "@/lib/constants/contact";
 
 // ─── Types ──────────────────────────────────────────────
 type TruckTab = "Open" | "Container" | "Trailer";
@@ -327,7 +328,7 @@ export function EstimateModal({ open, onClose, fromCity, toCity }: EstimateModal
 
               <div className="sticky bottom-0 px-5 py-4 bg-card border-t border-border flex gap-3">
                 <a
-                  href="tel:+919651429006"
+                  href={PRIMARY_PHONE.tel}
                   className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
                 >
                   <Phone className="h-4 w-4 text-accent" /> Call Us
@@ -429,7 +430,7 @@ export function EstimateModal({ open, onClose, fromCity, toCity }: EstimateModal
               {/* Footer */}
               <div className="px-4 py-3 border-t border-border shrink-0 flex gap-3">
                 <a
-                  href="tel:+919651429006"
+                  href={PRIMARY_PHONE.tel}
                   className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-border py-2.5 text-sm font-semibold text-foreground hover:bg-secondary transition-colors"
                 >
                   <Phone className="h-4 w-4 text-accent" /> Call Us

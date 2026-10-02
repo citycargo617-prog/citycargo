@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MessageCircle, X } from "lucide-react";
+import { WHATSAPP_NUMBER } from "@/lib/constants/contact";
 
 interface WhatsAppFloatingButtonProps {
   phone?: string;
@@ -9,7 +10,7 @@ interface WhatsAppFloatingButtonProps {
 }
 
 export function WhatsAppFloatingButton({
-  phone = "919651429006",
+  phone = WHATSAPP_NUMBER,
   defaultMessage = "Hi City Cargo, I want to book a truck. Please share vehicle availability and best rates.",
   fromCity = "",
   toCity = "",

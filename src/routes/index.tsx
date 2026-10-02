@@ -36,6 +36,8 @@ import { WhatsAppFloatingButton } from "@/components/site/WhatsAppFloatingButton
 import { CallFloatingButton } from "@/components/site/CallFloatingButton";
 import { usePWA } from "@/hooks/usePWA";
 import { InstallAppModal } from "@/components/site/InstallAppModal";
+import { HELPLINE_NUMBERS, PRIMARY_PHONE, WHATSAPP_NUMBER } from "@/lib/constants/contact";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -166,6 +168,7 @@ function Index() {
   const [dropCity, setDropCity] = useState("");
   const [showBankForm, setShowBankForm] = useState(false);
   const [showEstimate, setShowEstimate] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
   const { isInstalled, isIOS, showIOSModal, setShowIOSModal, installApp, isReady } = usePWA();
 
   function handleGetEstimate() {
@@ -181,6 +184,61 @@ function Index() {
         fromCity={pickupCity}
         toCity={dropCity}
       />
+
+      {/* 24x7 Helpline Picker Dialog */}
+      <Dialog open={showCallModal} onOpenChange={setShowCallModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display text-xl">Call City Cargo Helplines</DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Directly connect with our 24x7 transport dispatch and customer assistance desk.
+            </p>
+          </DialogHeader>
+          <div className="mt-4 space-y-2.5">
+            {HELPLINE_NUMBERS.map((item, idx) => (
+              <a
+                key={item.tel}
+                href={item.tel}
+                className={`flex items-center justify-between rounded-xl p-3.5 transition-all hover:scale-[1.01] ${
+                  idx === 0
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/25 hover:bg-primary/90"
+                    : "bg-secondary/70 border border-border/60 text-foreground hover:bg-secondary"
+                }`}
+                onClick={() => setShowCallModal(false)}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                      idx === 0 ? "bg-white/20 text-white" : "bg-accent/20 text-accent"
+                    }`}
+                  >
+                    <Phone className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold font-mono">{item.display}</p>
+                    <p
+                      className={`text-xs ${
+                        idx === 0 ? "text-primary-foreground/80" : "text-muted-foreground"
+                      }`}
+                    >
+                      {item.label} • 24x7 Available
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className={`rounded-lg px-3 py-1.5 text-xs font-bold ${
+                    idx === 0
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-card text-foreground border border-border"
+                  }`}
+                >
+                  Call Now
+                </span>
+              </a>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Top Announcement Bar if enabled */}
       {banner.showAnnouncement && banner.announcementText && (
@@ -249,16 +307,17 @@ function Index() {
                   Get price estimate <ArrowRight className="h-4 w-4" />
                 </Button>
 
-                <a
-                  href="tel:+919651429006"
+                <button
+                  type="button"
+                  onClick={() => setShowCallModal(true)}
                   className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-accent px-4 font-display text-sm font-bold text-accent-foreground shadow-md shadow-accent/20 hover:bg-accent/90 hover:scale-[1.02] active:scale-95 transition-all"
                 >
                   <Phone className="h-4 w-4" />
                   <span>Call Now</span>
-                </a>
+                </button>
 
                 <a
-                  href={`https://wa.me/919651429006?text=${encodeURIComponent(
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
                     pickupCity && dropCity
                       ? `Hi City Cargo, I want to book a truck from ${pickupCity} to ${dropCity}. Please share rates.`
                       : "Hi City Cargo, I want to book a truck. Please share vehicle options and rates."
@@ -276,6 +335,29 @@ function Index() {
                   </svg>
                   <span>WhatsApp</span>
                 </a>
+              </div>
+
+              {/* Direct Helpline badges */}
+              <div className="mt-4 pt-3.5 border-t border-border/40">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <Phone className="h-3 w-3 text-accent" /> 24x7 Helpline Numbers:
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  {HELPLINE_NUMBERS.map((item) => (
+                    <a
+                      key={item.tel}
+                      href={item.tel}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-card/85 px-2.5 py-1.5 text-xs font-mono font-bold text-foreground border border-border/70 hover:border-accent hover:text-accent transition-all shadow-sm group"
+                      title={`Call ${item.label}`}
+                    >
+                      <Phone className="h-3 w-3 text-accent group-hover:scale-110 transition-transform" />
+                      <span>{item.display}</span>
+                      <span className="text-[10px] text-muted-foreground font-sans font-normal">
+                        ({item.label})
+                      </span>
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
