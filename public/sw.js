@@ -1,4 +1,4 @@
-const CACHE_NAME = "citycargo-v1";
+const CACHE_NAME = "citycargo-v2";
 const OFFLINE_URL = "/offline.html";
 
 const PRECACHE_ASSETS = [

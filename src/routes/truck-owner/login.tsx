@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { PRIMARY_PHONE } from "@/lib/constants/contact";
 
 export const Route = createFileRoute("/truck-owner/login")({
   head: () => ({
@@ -276,10 +277,10 @@ function TruckOwnerLogin() {
                   <div className="mt-8 border-t border-gray-100 pt-4 text-center">
                     <p className="text-sm text-gray-400">Not able to login?</p>
                     <a
-                      href="tel:+919370093700"
+                      href={PRIMARY_PHONE.tel}
                       className="text-sm font-semibold text-primary hover:underline"
                     >
-                      Contact +91 93700-93700
+                      Contact {PRIMARY_PHONE.display}
                     </a>
                   </div>
                 </>
