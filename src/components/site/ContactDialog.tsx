@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone, CheckCircle2 } from "lucide-react";
+import { HELPLINE_NUMBERS } from "@/lib/constants/contact";
 
 interface ContactDialogProps {
   children: React.ReactNode;
@@ -107,6 +108,27 @@ export function ContactDialog({ children }: ContactDialogProps) {
                 Submit Enquiry
               </Button>
             </form>
+
+            <div className="mt-4 pt-3 border-t border-border">
+              <p className="text-xs font-semibold text-muted-foreground mb-2 text-center">
+                Or call our 24x7 Helplines directly:
+              </p>
+              <div className="flex flex-col gap-1.5">
+                {HELPLINE_NUMBERS.map((item) => (
+                  <a
+                    key={item.tel}
+                    href={item.tel}
+                    className="flex items-center justify-between rounded-lg bg-secondary/60 px-3 py-2 text-xs font-bold text-foreground hover:bg-accent/15 hover:text-accent-foreground transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Phone className="h-3.5 w-3.5 text-accent" />
+                      <span>{item.display}</span>
+                    </span>
+                    <span className="text-[10px] text-muted-foreground font-normal">{item.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </>
         )}
       </DialogContent>

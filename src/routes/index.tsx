@@ -338,22 +338,33 @@ function Index() {
               </div>
 
               {/* Direct Helpline badges */}
-              <div className="mt-4 pt-3.5 border-t border-border/40">
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                  <Phone className="h-3 w-3 text-accent" /> 24x7 Helpline Numbers:
-                </p>
-                <div className="flex flex-wrap items-center gap-2">
-                  {HELPLINE_NUMBERS.map((item) => (
+              <div className="mt-4 pt-3.5 border-t border-border/50">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-accent animate-pulse" /> 24x7 Helpline & Dispatch Numbers:
+                  </p>
+                  <span className="text-[10px] font-bold text-green-500 uppercase tracking-wider bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
+                    ● Live 24x7
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {HELPLINE_NUMBERS.map((item, idx) => (
                     <a
                       key={item.tel}
                       href={item.tel}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-card/85 px-2.5 py-1.5 text-xs font-mono font-bold text-foreground border border-border/70 hover:border-accent hover:text-accent transition-all shadow-sm group"
-                      title={`Call ${item.label}`}
+                      className={`flex flex-col items-start rounded-xl px-3 py-2 text-xs transition-all border shadow-sm group ${
+                        idx === 0
+                          ? "bg-accent/15 border-accent/40 text-foreground hover:bg-accent/25 hover:border-accent"
+                          : "bg-card/90 border-border/80 text-foreground hover:bg-accent/10 hover:border-accent/40"
+                      }`}
+                      title={`Call ${item.label}: ${item.display}`}
                     >
-                      <Phone className="h-3 w-3 text-accent group-hover:scale-110 transition-transform" />
-                      <span>{item.display}</span>
-                      <span className="text-[10px] text-muted-foreground font-sans font-normal">
-                        ({item.label})
+                      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                        {item.label}
+                      </span>
+                      <span className="font-mono font-bold text-sm tracking-tight flex items-center gap-1 text-foreground group-hover:text-accent transition-colors">
+                        <Phone className="h-3 w-3 text-accent shrink-0" />
+                        {item.display}
                       </span>
                     </a>
                   ))}
@@ -849,11 +860,39 @@ function Index() {
                 Book a truck
               </Button>
             </Link>
+            <button
+              type="button"
+              onClick={() => setShowCallModal(true)}
+              className="flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-accent px-5 font-display text-sm font-bold text-accent-foreground shadow-lg shadow-accent/20 hover:bg-accent/90 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              <Phone className="h-4 w-4" />
+              <span>Call Helplines ({PRIMARY_PHONE.display})</span>
+            </button>
             <Link to="/ptl" className="w-full sm:w-auto">
               <Button variant="soft" size="xl" className="w-full sm:w-auto">
                 Part load rates
               </Button>
             </Link>
+          </div>
+
+          {/* Bottom CTA Helplines strip */}
+          <div className="mt-8 pt-6 border-t border-primary-foreground/15 max-w-2xl mx-auto">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary-foreground/70 mb-3">
+              Need immediate assistance? Call our 24x7 dispatch team:
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              {HELPLINE_NUMBERS.map((item) => (
+                <a
+                  key={item.tel}
+                  href={item.tel}
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary-foreground/10 px-3.5 py-2 text-xs font-mono font-bold text-primary-foreground border border-primary-foreground/15 hover:bg-accent hover:text-accent-foreground hover:border-accent transition-all backdrop-blur-sm"
+                >
+                  <Phone className="h-3.5 w-3.5 text-accent" />
+                  <span>{item.display}</span>
+                  <span className="text-[10px] font-sans font-normal opacity-75">({item.label})</span>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
         <div className="relative h-16 border-t border-primary-foreground/15">
