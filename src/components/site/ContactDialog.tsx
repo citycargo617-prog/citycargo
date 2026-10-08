@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Phone, CheckCircle2 } from "lucide-react";
-import { HELPLINE_NUMBERS } from "@/lib/constants/contact";
+import { HELPLINE_NUMBERS, type HelplineNumber } from "@/lib/constants/contact";
 
 interface ContactDialogProps {
   children: React.ReactNode;
@@ -114,10 +114,10 @@ export function ContactDialog({ children }: ContactDialogProps) {
                 Or call our 24x7 Helplines directly:
               </p>
               <div className="flex flex-col gap-1.5">
-                {HELPLINE_NUMBERS.map((item) => (
+                {HELPLINE_NUMBERS.map((item: HelplineNumber) => (
                   <a
                     key={item.tel}
-                    href={item.tel}
+                    href={`tel:${item.tel}`}
                     className="flex items-center justify-between rounded-lg bg-secondary/60 px-3 py-2 text-xs font-bold text-foreground hover:bg-accent/15 hover:text-accent-foreground transition-colors"
                   >
                     <span className="flex items-center gap-2">
