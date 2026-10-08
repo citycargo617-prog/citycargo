@@ -117,7 +117,7 @@ export function ContactDialog({ children }: ContactDialogProps) {
                 {HELPLINE_NUMBERS.map((item: HelplineNumber) => (
                   <a
                     key={item.tel}
-                    href={`tel:${item.tel}`}
+                    href={item.tel}
                     className="flex items-center justify-between rounded-lg bg-secondary/60 px-3 py-2 text-xs font-bold text-foreground hover:bg-accent/15 hover:text-accent-foreground transition-colors"
                   >
                     <span className="flex items-center gap-2">

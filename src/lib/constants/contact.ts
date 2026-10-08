@@ -8,19 +8,19 @@ export interface HelplineNumber {
 export const HELPLINE_NUMBERS: HelplineNumber[] = [
   {
     raw: "9628258275",
-    tel: "+919628258275",
+    tel: "tel:+919628258275",
     display: "+91 96282 58275",
     label: "Dispatch Line 1",
   },
   {
     raw: "9838544478",
-    tel: "+919838544478",
+    tel: "tel:+919838544478",
     display: "+91 98385 44478",
     label: "Dispatch Line 2",
   },
   {
     raw: "9721800444",
-    tel: "+919721800444",
+    tel: "tel:+919721800444",
     display: "+91 97218 00444",
     label: "Customer Support",
   },
