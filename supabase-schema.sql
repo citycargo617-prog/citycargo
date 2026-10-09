@@ -167,3 +167,46 @@ VALUES
   ('kol-bhu', 'Kolkata', 'Bhubaneswar', 440, 8.5),
   ('ahm-sur', 'Ahmedabad', 'Surat', 270, 5)
 ON CONFLICT (id) DO NOTHING;
+
+-- ==============================================================================
+-- 6. REVIEWS TABLE (Customer reviews and ratings)
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS public.reviews (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    reviewer_name TEXT NOT NULL,
+    city TEXT,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    title TEXT,
+    review_text TEXT NOT NULL,
+    is_approved BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+-- Allow anyone to submit a review
+CREATE POLICY "Allow public review creation"
+ON public.reviews FOR INSERT
+WITH CHECK (true);
+
+-- Allow reading approved reviews
+CREATE POLICY "Allow public read approved reviews"
+ON public.reviews FOR SELECT
+USING (is_approved = true);
+
+-- Allow admin full access
+CREATE POLICY "Allow full access reviews"
+ON public.reviews FOR ALL
+USING (true);
+
+-- Seed a few initial reviews
+INSERT INTO public.reviews (reviewer_name, city, rating, title, review_text)
+VALUES
+  ('Rakesh Malhotra', 'Ludhiana', 5, 'Lightning-fast dispatch', 'City Cargo cut our dispatch time in half. Getting a truck now takes minutes, not a full day of phone calls. Highly recommended for steel transport.'),
+  ('Anita Deshmukh', 'Pune', 5, 'Transparent and reliable', 'Live tracking means my clients stop calling me for updates. The pricing has stayed exactly as quoted every single time.'),
+  ('Imran Sheikh', 'Jaipur', 5, 'Zero damage guarantee', 'Verified drivers made all the difference. Six months, forty loads, not one damaged consignment. Best for furniture logistics.'),
+  ('Priya Sharma', 'Surat', 5, 'Part load is a game-changer', 'The part-load service saves us 40% on smaller shipments without compromising on speed. Excellent for textile exports.'),
+  ('Vikram Patel', 'Ahmedabad', 4, 'Great value for money', 'Competitive pricing and on-time delivery. Used them for chemical drums and the service was top-notch. Will use again.'),
+  ('Sunita Reddy', 'Hyderabad', 5, 'Best logistics partner', 'We switched from our old transporter 8 months ago. City Cargo''s GPS tracking and 24x7 support is unmatched in the industry.')
+ON CONFLICT DO NOTHING;

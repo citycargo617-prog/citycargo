@@ -555,3 +555,31 @@
 @utility animate-scale-pop {
   animation: scale-pop 0.5s ease-out both;
 }
+
+/* ── Review Section ── */
+
+.review-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.review-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.review-card {
+  scroll-snap-align: start;
+  animation: review-card-enter 0.5s ease-out both;
+}
+
+@keyframes review-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

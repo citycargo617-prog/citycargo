@@ -38,6 +38,7 @@ import { usePWA } from "@/hooks/usePWA";
 import { InstallAppModal } from "@/components/site/InstallAppModal";
 import { HELPLINE_NUMBERS, PRIMARY_PHONE, WHATSAPP_NUMBER } from "@/lib/constants/contact";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ReviewSection } from "@/components/site/ReviewSection";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -129,33 +130,6 @@ const comparison = [
   "Deliver across India",
   "Market's Best Price",
   "24x7 GPS Tracking",
-];
-
-const testimonials = [
-  {
-    name: "Rakesh Malhotra",
-    role: "Steel trader, Ludhiana",
-    text: "City Cargo cut our dispatch time in half. Getting a truck now takes minutes, not a full day of phone calls.",
-    rating: 5,
-  },
-  {
-    name: "Anita Deshmukh",
-    role: "FMCG distributor, Pune",
-    text: "Live tracking means my clients stop calling me for updates. The pricing has stayed exactly as quoted.",
-    rating: 5,
-  },
-  {
-    name: "Imran Sheikh",
-    role: "Furniture maker, Jaipur",
-    text: "Verified drivers made all the difference. Six months, forty loads, not one damaged consignment.",
-    rating: 5,
-  },
-  {
-    name: "Priya Sharma",
-    role: "Textile exporter, Surat",
-    text: "The part-load service is a game-changer for us. We save 40% on smaller shipments without compromising on speed.",
-    rating: 5,
-  },
 ];
 
 
@@ -597,26 +571,8 @@ function Index() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-5 sm:py-20">
-        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-          Loved by shippers
-        </h2>
-        <div className="mt-8 grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {testimonials.map((t) => (
-            <div key={t.name} className="card-elevated rounded-3xl p-5 sm:p-7">
-              <div className="flex gap-1">
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                ))}
-              </div>
-              <p className="mt-4 text-sm leading-relaxed text-foreground">"{t.text}"</p>
-              <p className="mt-6 font-display font-bold text-foreground">{t.name}</p>
-              <p className="text-xs text-muted-foreground">{t.role}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── Customer Reviews ── */}
+      <ReviewSection />
 
       {/* ── Download App / PWA Install ── */}
       <section className="bg-secondary/60 py-12 sm:py-16">

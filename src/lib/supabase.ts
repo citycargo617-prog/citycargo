@@ -72,3 +72,14 @@ export interface SupabaseRoute {
   estimated_hours: number;
   created_at: string;
 }
+
+export interface SupabaseReview {
+  id: string;
+  reviewer_name: string;
+  city?: string;
+  rating: number;
+  title?: string;
+  review_text: string;
+  is_approved: boolean;
+  created_at: string;
+}
