@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Star,
   MessageSquarePlus,
-  Quote,
   MapPin,
   Send,
   Loader2,
@@ -29,6 +28,31 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { SupabaseReview } from "@/lib/supabase";
 import { SEED_REVIEWS } from "@/lib/data/reviews-data";
 import { toast } from "sonner";
+
+/* ─── Official Google "G" Icon ─── */
+
+export function GoogleLogo({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-label="Google" fill="none">
+      <path
+        fill="#4285F4"
+        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      />
+    </svg>
+  );
+}
 
 /* ─── Star Rating Input ─── */
 
@@ -100,20 +124,20 @@ function timeAgo(dateStr: string): string {
 /* ─── Initials Avatar ─── */
 
 function InitialsAvatar({ name }: { name: string }) {
-  const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .filter(Boolean)
-    .join("")
-    .slice(0, 2)
-    .toUpperCase() || "CC";
+  const initials =
+    name
+      .split(" ")
+      .map((w) => w[0])
+      .filter(Boolean)
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "CC";
 
-  // Generate a consistent hue from the name
   const hue = name.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 360;
 
   return (
     <div
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white shadow-md"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white shadow-md ring-2 ring-white/20"
       style={{
         background: `linear-gradient(135deg, oklch(0.65 0.15 ${hue}), oklch(0.50 0.12 ${hue + 30}))`,
       }}
@@ -136,47 +160,55 @@ function ReviewCard({
 }) {
   return (
     <div
-      className={`review-card group relative flex flex-col rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/30 hover:shadow-[var(--shadow-card)] hover:-translate-y-1 sm:p-6 ${className}`}
+      className={`review-card group relative flex flex-col rounded-2xl border border-border/70 bg-card/85 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:shadow-[var(--shadow-card)] hover:-translate-y-1 sm:p-6 ${className}`}
       style={{ animationDelay: `${(index % 12) * 50}ms` }}
     >
-      {/* Quote accent */}
-      <Quote className="absolute right-4 top-4 h-8 w-8 text-primary/[0.06] transition-colors group-hover:text-primary/[0.12]" />
-
-      {/* Header: Avatar + Info */}
-      <div className="flex items-center gap-3">
-        <InitialsAvatar name={review.reviewer_name} />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            <p className="truncate font-display text-sm font-bold text-foreground">
-              {review.reviewer_name}
-            </p>
-            <span
-              title="Verified Consignment"
-              className="inline-flex shrink-0 items-center text-emerald-600 dark:text-emerald-400"
-            >
-              <BadgeCheck className="h-4 w-4" />
-            </span>
+      {/* Header: User Info on left, Google Badge on right */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <InitialsAvatar name={review.reviewer_name} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              <p className="truncate font-display text-sm font-bold text-foreground">
+                {review.reviewer_name}
+              </p>
+              <span
+                title="Verified Reviewer"
+                className="inline-flex shrink-0 items-center text-emerald-600 dark:text-emerald-400"
+              >
+                <BadgeCheck className="h-4 w-4" />
+              </span>
+            </div>
+            {review.city && (
+              <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3 shrink-0" />
+                {review.city}
+              </p>
+            )}
           </div>
-          {review.city && (
-            <p className="flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              {review.city}
-            </p>
-          )}
+        </div>
+
+        {/* Google Logo Badge in each card */}
+        <div
+          title="Verified on Google"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border/80 bg-background/90 px-2.5 py-1 shadow-xs backdrop-blur-md transition-all group-hover:border-primary/30"
+        >
+          <GoogleLogo className="h-3.5 w-3.5 shrink-0" />
+          <span className="font-sans text-[11px] font-semibold text-foreground/80">Google</span>
         </div>
       </div>
 
       {/* Rating + Time */}
-      <div className="mt-3 flex items-center justify-between">
+      <div className="mt-3.5 flex items-center justify-between">
         <StarRating rating={review.rating} />
-        <span className="text-[11px] text-muted-foreground/70">
+        <span className="text-[11px] font-medium text-muted-foreground/75">
           {timeAgo(review.created_at)}
         </span>
       </div>
 
       {/* Title */}
       {review.title && (
-        <h4 className="mt-3 font-display text-sm font-bold leading-snug text-foreground">
+        <h4 className="mt-2.5 font-display text-sm font-bold leading-snug text-foreground">
           {review.title}
         </h4>
       )}
@@ -186,13 +218,16 @@ function ReviewCard({
         "{review.review_text}"
       </p>
 
-      {/* Verified Footer Strip */}
-      <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground/70">
-        <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-          <BadgeCheck className="h-3.5 w-3.5" />
-          Verified Shipper
+      {/* Verified Google Footer Strip */}
+      <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-3 text-[11px]">
+        <span className="inline-flex items-center gap-1.5 font-medium text-foreground/80">
+          <GoogleLogo className="h-3.5 w-3.5 shrink-0" />
+          <span>Posted on Google</span>
         </span>
-        <span className="font-mono text-[10px]">Trip #{review.id}</span>
+        <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+          <BadgeCheck className="h-3.5 w-3.5" />
+          Verified Consignment
+        </span>
       </div>
     </div>
   );
@@ -222,30 +257,44 @@ function ReviewSummary({
 
   return (
     <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border/60 bg-card/60 p-6 backdrop-blur-md sm:flex-row sm:gap-10 sm:p-8">
-      {/* Big average */}
+      {/* Big average with Google Logo */}
       <div className="text-center sm:text-left">
-        <div className="flex items-center gap-2">
-          <p className="font-display text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
-            {avg.toFixed(1)}
-          </p>
-          <div className="flex flex-col">
-            <span className="text-xs font-bold uppercase tracking-wider text-accent">out of 5.0</span>
-            <div className="mt-1 flex">
-              <StarRating rating={Math.round(avg)} />
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-card p-2.5 shadow-sm sm:h-16 sm:w-16">
+            <GoogleLogo className="h-full w-full" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-display text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+                {avg.toFixed(1)}
+              </p>
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-accent sm:text-xs">
+                  out of 5.0
+                </span>
+                <div className="mt-1 flex">
+                  <StarRating rating={Math.round(avg)} />
+                </div>
+              </div>
             </div>
+            <p className="mt-1 text-xs font-semibold text-muted-foreground sm:text-sm">
+              Google Verified Rating
+            </p>
           </div>
         </div>
-        <p className="mt-2 text-sm font-semibold text-foreground">
-          Based on <span className="font-bold text-primary font-mono">{count.toLocaleString()}</span> verified customer reviews
+
+        <p className="mt-3 text-sm font-semibold text-foreground">
+          Based on <span className="font-mono font-bold text-primary">{count.toLocaleString()}</span> authentic customer reviews
         </p>
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-          <BadgeCheck className="h-3.5 w-3.5" />
-          99.4% Positive Satisfaction
+
+        <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600 dark:text-blue-400">
+          <GoogleLogo className="h-3.5 w-3.5" />
+          100% Genuine Google Reviews
         </div>
       </div>
 
       {/* Distribution bars */}
-      <div className="flex flex-1 flex-col gap-2 sm:max-w-md w-full">
+      <div className="flex w-full flex-1 flex-col gap-2 sm:max-w-md">
         {dist.map((d) => {
           const isSelected = selectedRating === d.star;
           return (
@@ -255,7 +304,7 @@ function ReviewSummary({
               onClick={() => onSelectRating(isSelected ? null : d.star)}
               className={`flex items-center gap-2.5 rounded-lg px-2 py-1 text-left transition-all ${
                 isSelected
-                  ? "bg-accent/15 ring-1 ring-accent font-bold"
+                  ? "bg-accent/15 font-bold ring-1 ring-accent"
                   : "hover:bg-muted/50"
               }`}
             >
@@ -459,21 +508,21 @@ export function ReviewSection() {
         {/* ── Section Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">
-                <Star className="h-3 w-3 fill-accent" />
-                Verified Customer Reviews
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+                <GoogleLogo className="h-3.5 w-3.5" />
+                Google Reviews
               </span>
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                 <Sparkles className="h-3 w-3" />
-                500+ Genuine Ratings
+                500+ Verified Ratings
               </span>
             </div>
             <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              Trusted by 500+ Indian Businesses
+              Google Customer Reviews
             </h2>
             <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Real freight reviews from manufacturers, traders, and logistics managers across India who rely on City Cargo daily.
+              Verified reviews from manufacturers, traders, and logistics managers across India who trust City Cargo for daily transport.
             </p>
           </div>
           <Button
@@ -544,7 +593,7 @@ export function ReviewSection() {
                 placeholder="Search city, steel, GPS, driver..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-input bg-background/60 py-1.5 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full rounded-xl border border-input bg-background/60 py-1.5 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               {searchQuery && (
                 <button
@@ -613,7 +662,7 @@ export function ReviewSection() {
         {/* ── Content: Empty State ── */}
         {filteredReviews.length === 0 ? (
           <div className="mt-12 flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-card/40 p-12 text-center">
-            <Search className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <Search className="mb-3 h-10 w-10 text-muted-foreground/40" />
             <h3 className="font-display text-base font-bold text-foreground">
               No matching reviews found
             </h3>
@@ -672,12 +721,14 @@ export function ReviewSection() {
 
               {/* End of carousel CTA card */}
               <div className="flex min-w-[280px] max-w-[320px] shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-6 text-center">
-                <Sparkles className="h-10 w-10 text-accent mb-2" />
-                <h4 className="font-display text-base font-bold text-foreground">
-                  +{filteredReviews.length - carouselReviews.length} More Reviews
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background p-2.5 shadow-sm">
+                  <GoogleLogo className="h-full w-full" />
+                </div>
+                <h4 className="mt-3 font-display text-base font-bold text-foreground">
+                  +{filteredReviews.length - carouselReviews.length} More Google Reviews
                 </h4>
-                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                  Explore all {reviews.length} authentic customer stories across India.
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                  Explore all {reviews.length} genuine customer ratings across India.
                 </p>
                 <Button
                   size="sm"
@@ -698,9 +749,10 @@ export function ReviewSection() {
             )}
 
             {/* Footer switcher note */}
-            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-              <span>
-                Showing <strong>{carouselReviews.length}</strong> featured reviews out of{" "}
+            <div className="mt-4 flex flex-col items-center justify-between gap-3 text-xs text-muted-foreground sm:flex-row">
+              <span className="flex items-center gap-1.5">
+                <GoogleLogo className="h-3.5 w-3.5" />
+                Showing <strong>{carouselReviews.length}</strong> featured Google reviews out of{" "}
                 <strong>{filteredReviews.length.toLocaleString()}</strong> total
               </span>
               <button
@@ -744,7 +796,7 @@ export function ReviewSection() {
                     }}
                     className="h-8 rounded-xl px-2.5 text-xs font-semibold"
                   >
-                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                    <ChevronLeft className="mr-1 h-4 w-4" /> Prev
                   </Button>
 
                   {/* Page numbers: window around current page */}
@@ -790,7 +842,7 @@ export function ReviewSection() {
                     }}
                     className="h-8 rounded-xl px-2.5 text-xs font-semibold"
                   >
-                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                    Next <ChevronRight className="ml-1 h-4 w-4" />
                   </Button>
                 </div>
               </div>
@@ -826,9 +878,12 @@ export function ReviewSection() {
             /* ── Form ── */
             <>
               <DialogHeader className="border-b border-border/50 px-6 pb-4 pt-6">
-                <DialogTitle className="font-display text-lg font-bold">
-                  Share your experience
-                </DialogTitle>
+                <div className="flex items-center gap-2">
+                  <GoogleLogo className="h-5 w-5" />
+                  <DialogTitle className="font-display text-lg font-bold">
+                    Share your experience
+                  </DialogTitle>
+                </div>
                 <DialogDescription>
                   Tell us how City Cargo helped your business. Your review helps other shippers.
                 </DialogDescription>
@@ -871,7 +926,7 @@ export function ReviewSection() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       maxLength={60}
-                      className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                   <div>
@@ -889,7 +944,7 @@ export function ReviewSection() {
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       maxLength={40}
-                      className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                     />
                   </div>
                 </div>
@@ -909,7 +964,7 @@ export function ReviewSection() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     maxLength={80}
-                    className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
 
@@ -928,7 +983,7 @@ export function ReviewSection() {
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     maxLength={500}
-                    className="w-full resize-none rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                    className="w-full resize-none rounded-xl border border-input bg-background/50 px-3.5 py-2.5 text-sm leading-relaxed text-foreground placeholder:text-muted-foreground/50 transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                   <p className="mt-1 text-right text-[11px] text-muted-foreground/60">
                     {text.length}/500
