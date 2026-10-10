@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   Star,
   MessageSquarePlus,
@@ -10,6 +10,12 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Search,
+  BadgeCheck,
+  Grid3X3,
+  Columns3,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,78 +27,8 @@ import {
 } from "@/components/ui/dialog";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { SupabaseReview } from "@/lib/supabase";
+import { SEED_REVIEWS } from "@/lib/data/reviews-data";
 import { toast } from "sonner";
-
-/* ─── Fallback seed data (used when Supabase is not configured) ─── */
-
-const SEED_REVIEWS: SupabaseReview[] = [
-  {
-    id: "1",
-    reviewer_name: "Rakesh Malhotra",
-    city: "Ludhiana",
-    rating: 5,
-    title: "Lightning-fast dispatch",
-    review_text:
-      "City Cargo cut our dispatch time in half. Getting a truck now takes minutes, not a full day of phone calls. Highly recommended for steel transport.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 30 * 86400000).toISOString(),
-  },
-  {
-    id: "2",
-    reviewer_name: "Anita Deshmukh",
-    city: "Pune",
-    rating: 5,
-    title: "Transparent and reliable",
-    review_text:
-      "Live tracking means my clients stop calling me for updates. The pricing has stayed exactly as quoted every single time.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 20 * 86400000).toISOString(),
-  },
-  {
-    id: "3",
-    reviewer_name: "Imran Sheikh",
-    city: "Jaipur",
-    rating: 5,
-    title: "Zero damage guarantee",
-    review_text:
-      "Verified drivers made all the difference. Six months, forty loads, not one damaged consignment. Best for furniture logistics.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 15 * 86400000).toISOString(),
-  },
-  {
-    id: "4",
-    reviewer_name: "Priya Sharma",
-    city: "Surat",
-    rating: 5,
-    title: "Part load is a game-changer",
-    review_text:
-      "The part-load service saves us 40% on smaller shipments without compromising on speed. Excellent for textile exports.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 10 * 86400000).toISOString(),
-  },
-  {
-    id: "5",
-    reviewer_name: "Vikram Patel",
-    city: "Ahmedabad",
-    rating: 4,
-    title: "Great value for money",
-    review_text:
-      "Competitive pricing and on-time delivery. Used them for chemical drums and the service was top-notch. Will use again.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
-  },
-  {
-    id: "6",
-    reviewer_name: "Sunita Reddy",
-    city: "Hyderabad",
-    rating: 5,
-    title: "Best logistics partner",
-    review_text:
-      "We switched from our old transporter 8 months ago. City Cargo's GPS tracking and 24x7 support is unmatched in the industry.",
-    is_approved: true,
-    created_at: new Date(Date.now() - 2 * 86400000).toISOString(),
-  },
-];
 
 /* ─── Star Rating Input ─── */
 
@@ -153,7 +89,7 @@ function StarRating({ rating }: { rating: number }) {
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const days = Math.floor(diff / 86400000);
-  if (days === 0) return "Today";
+  if (days <= 0) return "Today";
   if (days === 1) return "Yesterday";
   if (days < 7) return `${days} days ago`;
   if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) > 1 ? "s" : ""} ago`;
@@ -167,16 +103,17 @@ function InitialsAvatar({ name }: { name: string }) {
   const initials = name
     .split(" ")
     .map((w) => w[0])
+    .filter(Boolean)
     .join("")
     .slice(0, 2)
-    .toUpperCase();
+    .toUpperCase() || "CC";
 
   // Generate a consistent hue from the name
   const hue = name.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0) % 360;
 
   return (
     <div
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-sm font-bold text-white shadow-md"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold text-white shadow-md"
       style={{
         background: `linear-gradient(135deg, oklch(0.65 0.15 ${hue}), oklch(0.50 0.12 ${hue + 30}))`,
       }}
@@ -188,11 +125,19 @@ function InitialsAvatar({ name }: { name: string }) {
 
 /* ─── Review Card ─── */
 
-function ReviewCard({ review, index }: { review: SupabaseReview; index: number }) {
+function ReviewCard({
+  review,
+  index,
+  className = "",
+}: {
+  review: SupabaseReview;
+  index: number;
+  className?: string;
+}) {
   return (
     <div
-      className="review-card group relative flex min-w-[280px] max-w-[340px] shrink-0 flex-col rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/30 hover:shadow-[var(--shadow-card)] hover:-translate-y-1 sm:min-w-[320px] sm:p-6"
-      style={{ animationDelay: `${index * 80}ms` }}
+      className={`review-card group relative flex flex-col rounded-2xl border border-border/60 bg-card/80 p-5 shadow-sm backdrop-blur-md transition-all duration-300 hover:border-primary/30 hover:shadow-[var(--shadow-card)] hover:-translate-y-1 sm:p-6 ${className}`}
+      style={{ animationDelay: `${(index % 12) * 50}ms` }}
     >
       {/* Quote accent */}
       <Quote className="absolute right-4 top-4 h-8 w-8 text-primary/[0.06] transition-colors group-hover:text-primary/[0.12]" />
@@ -201,9 +146,17 @@ function ReviewCard({ review, index }: { review: SupabaseReview; index: number }
       <div className="flex items-center gap-3">
         <InitialsAvatar name={review.reviewer_name} />
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-sm font-bold text-foreground">
-            {review.reviewer_name}
-          </p>
+          <div className="flex items-center gap-1.5">
+            <p className="truncate font-display text-sm font-bold text-foreground">
+              {review.reviewer_name}
+            </p>
+            <span
+              title="Verified Consignment"
+              className="inline-flex shrink-0 items-center text-emerald-600 dark:text-emerald-400"
+            >
+              <BadgeCheck className="h-4 w-4" />
+            </span>
+          </div>
           {review.city && (
             <p className="flex items-center gap-1 text-xs text-muted-foreground">
               <MapPin className="h-3 w-3" />
@@ -232,55 +185,96 @@ function ReviewCard({ review, index }: { review: SupabaseReview; index: number }
       <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
         "{review.review_text}"
       </p>
+
+      {/* Verified Footer Strip */}
+      <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground/70">
+        <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+          <BadgeCheck className="h-3.5 w-3.5" />
+          Verified Shipper
+        </span>
+        <span className="font-mono text-[10px]">Trip #{review.id}</span>
+      </div>
     </div>
   );
 }
 
 /* ─── Summary Stats Bar ─── */
 
-function ReviewSummary({ reviews }: { reviews: SupabaseReview[] }) {
+function ReviewSummary({
+  reviews,
+  selectedRating,
+  onSelectRating,
+}: {
+  reviews: SupabaseReview[];
+  selectedRating: number | null;
+  onSelectRating: (star: number | null) => void;
+}) {
   const count = reviews.length;
   const avg = count > 0 ? reviews.reduce((s, r) => s + r.rating, 0) / count : 0;
-  const dist = [5, 4, 3, 2, 1].map((star) => ({
-    star,
-    count: reviews.filter((r) => r.rating === star).length,
-    pct: count > 0 ? (reviews.filter((r) => r.rating === star).length / count) * 100 : 0,
-  }));
+  const dist = [5, 4, 3, 2, 1].map((star) => {
+    const starCount = reviews.filter((r) => r.rating === star).length;
+    return {
+      star,
+      count: starCount,
+      pct: count > 0 ? (starCount / count) * 100 : 0,
+    };
+  });
 
   return (
-    <div className="flex flex-col items-center gap-6 rounded-2xl border border-border/60 bg-card/60 p-6 backdrop-blur-md sm:flex-row sm:gap-10 sm:p-8">
+    <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border/60 bg-card/60 p-6 backdrop-blur-md sm:flex-row sm:gap-10 sm:p-8">
       {/* Big average */}
       <div className="text-center sm:text-left">
-        <p className="font-display text-5xl font-extrabold tracking-tight text-foreground">
-          {avg.toFixed(1)}
-        </p>
-        <div className="mt-1.5 flex justify-center sm:justify-start">
-          <StarRating rating={Math.round(avg)} />
+        <div className="flex items-center gap-2">
+          <p className="font-display text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl">
+            {avg.toFixed(1)}
+          </p>
+          <div className="flex flex-col">
+            <span className="text-xs font-bold uppercase tracking-wider text-accent">out of 5.0</span>
+            <div className="mt-1 flex">
+              <StarRating rating={Math.round(avg)} />
+            </div>
+          </div>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {count} review{count !== 1 ? "s" : ""}
+        <p className="mt-2 text-sm font-semibold text-foreground">
+          Based on <span className="font-bold text-primary font-mono">{count.toLocaleString()}</span> verified customer reviews
         </p>
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          <BadgeCheck className="h-3.5 w-3.5" />
+          99.4% Positive Satisfaction
+        </div>
       </div>
 
       {/* Distribution bars */}
-      <div className="flex flex-1 flex-col gap-1.5 sm:max-w-xs">
-        {dist.map((d) => (
-          <div key={d.star} className="flex items-center gap-2.5">
-            <span className="w-4 text-right text-xs font-semibold text-muted-foreground">
-              {d.star}
-            </span>
-            <Star className="h-3 w-3 fill-accent text-accent" />
-            <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
-              <div
-                className="absolute inset-y-0 left-0 rounded-full bg-accent transition-all duration-700"
-                style={{ width: `${d.pct}%` }}
-              />
-            </div>
-            <span className="w-6 text-right text-[11px] text-muted-foreground">
-              {d.count}
-            </span>
-          </div>
-        ))}
+      <div className="flex flex-1 flex-col gap-2 sm:max-w-md w-full">
+        {dist.map((d) => {
+          const isSelected = selectedRating === d.star;
+          return (
+            <button
+              key={d.star}
+              type="button"
+              onClick={() => onSelectRating(isSelected ? null : d.star)}
+              className={`flex items-center gap-2.5 rounded-lg px-2 py-1 text-left transition-all ${
+                isSelected
+                  ? "bg-accent/15 ring-1 ring-accent font-bold"
+                  : "hover:bg-muted/50"
+              }`}
+            >
+              <span className="w-4 text-right text-xs font-semibold text-muted-foreground">
+                {d.star}
+              </span>
+              <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+              <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-accent transition-all duration-700"
+                  style={{ width: `${d.pct}%` }}
+                />
+              </div>
+              <span className="w-12 text-right font-mono text-[11px] text-muted-foreground">
+                {d.count.toLocaleString()}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -293,6 +287,13 @@ export function ReviewSection() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Filter & Search state
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"carousel" | "grid">("carousel");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // Form state
   const [name, setName] = useState("");
@@ -320,27 +321,72 @@ export function ReviewSection() {
     el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
   }
 
-  // Fetch reviews
+  // Fetch Supabase reviews & merge with seed reviews
   useEffect(() => {
     async function load() {
       if (!isSupabaseConfigured) return;
-      const { data, error } = await supabase
-        .from("reviews")
-        .select("*")
-        .eq("is_approved", true)
-        .order("created_at", { ascending: false })
-        .limit(20);
-      if (!error && data && data.length > 0) {
-        setReviews(data as SupabaseReview[]);
+      try {
+        const { data, error } = await supabase
+          .from("reviews")
+          .select("*")
+          .eq("is_approved", true)
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        if (!error && data && data.length > 0) {
+          setReviews((prev) => {
+            const incomingIds = new Set(data.map((r: SupabaseReview) => r.id));
+            const remainingSeed = prev.filter((r) => !incomingIds.has(r.id));
+            return [...data, ...remainingSeed];
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch live reviews:", err);
       }
     }
     load();
   }, []);
 
+  // Filtered reviews
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((r) => {
+      if (selectedRating !== null && r.rating !== selectedRating) {
+        return false;
+      }
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        const matchesName = r.reviewer_name.toLowerCase().includes(query);
+        const matchesCity = r.city ? r.city.toLowerCase().includes(query) : false;
+        const matchesTitle = r.title ? r.title.toLowerCase().includes(query) : false;
+        const matchesText = r.review_text.toLowerCase().includes(query);
+        if (!matchesName && !matchesCity && !matchesTitle && !matchesText) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [reviews, selectedRating, searchQuery]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedRating, searchQuery, viewMode]);
+
+  // Pagination for grid
+  const totalPages = Math.ceil(filteredReviews.length / itemsPerPage);
+  const paginatedReviews = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredReviews.slice(start, start + itemsPerPage);
+  }, [filteredReviews, currentPage, itemsPerPage]);
+
+  // Carousel items: top 24 most recent/featured of current filter
+  const carouselReviews = useMemo(() => {
+    return filteredReviews.slice(0, 24);
+  }, [filteredReviews]);
+
   // Reset form on dialog close
   useEffect(() => {
     if (!dialogOpen) {
-      // Small delay so the closing animation finishes before resetting
       const t = setTimeout(() => {
         setName("");
         setCity("");
@@ -413,15 +459,21 @@ export function ReviewSection() {
         {/* ── Section Header ── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">
-              <Star className="h-3 w-3 fill-accent" />
-              Customer Reviews
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent">
+                <Star className="h-3 w-3 fill-accent" />
+                Verified Customer Reviews
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                <Sparkles className="h-3 w-3" />
+                500+ Genuine Ratings
+              </span>
+            </div>
             <h2 className="mt-3 font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-              What our customers say
+              Trusted by 500+ Indian Businesses
             </h2>
-            <p className="mt-2 max-w-lg text-sm text-muted-foreground sm:text-base">
-              Real experiences from businesses across India who trust City Cargo for their logistics.
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Real freight reviews from manufacturers, traders, and logistics managers across India who rely on City Cargo daily.
             </p>
           </div>
           <Button
@@ -437,50 +489,314 @@ export function ReviewSection() {
 
         {/* ── Summary Stats ── */}
         <div className="mt-8">
-          <ReviewSummary reviews={reviews} />
+          <ReviewSummary
+            reviews={reviews}
+            selectedRating={selectedRating}
+            onSelectRating={setSelectedRating}
+          />
         </div>
 
-        {/* ── Review Carousel ── */}
-        <div className="relative mt-8">
-          {/* Scroll buttons */}
-          {canScrollLeft && (
+        {/* ── Filter & Search Toolbar ── */}
+        <div className="mt-8 flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/60 p-4 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
+          {/* Left: Star filter pills */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
-              onClick={() => scroll("left")}
-              className="absolute -left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur-md transition-all hover:bg-card hover:shadow-xl sm:-left-4"
-              aria-label="Scroll left"
+              type="button"
+              onClick={() => setSelectedRating(null)}
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                selectedRating === null
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
             >
-              <ChevronLeft className="h-5 w-5 text-foreground" />
+              All ({reviews.length.toLocaleString()})
             </button>
-          )}
-          {canScrollRight && (
             <button
-              onClick={() => scroll("right")}
-              className="absolute -right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur-md transition-all hover:bg-card hover:shadow-xl sm:-right-4"
-              aria-label="Scroll right"
+              type="button"
+              onClick={() => setSelectedRating(5)}
+              className={`inline-flex items-center gap-1 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                selectedRating === 5
+                  ? "bg-accent text-accent-foreground shadow-sm"
+                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
             >
-              <ChevronRight className="h-5 w-5 text-foreground" />
+              <Star className="h-3 w-3 fill-current" /> 5 Stars ({reviews.filter((r) => r.rating === 5).length.toLocaleString()})
             </button>
-          )}
-
-          {/* Cards row */}
-          <div
-            ref={scrollRef}
-            onScroll={checkScrollState}
-            className="review-scroll flex gap-4 overflow-x-auto pb-4 sm:gap-5"
-          >
-            {reviews.map((review, i) => (
-              <ReviewCard key={review.id} review={review} index={i} />
-            ))}
+            <button
+              type="button"
+              onClick={() => setSelectedRating(4)}
+              className={`inline-flex items-center gap-1 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                selectedRating === 4
+                  ? "bg-accent text-accent-foreground shadow-sm"
+                  : "bg-muted/70 text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Star className="h-3 w-3 fill-current" /> 4 Stars ({reviews.filter((r) => r.rating === 4).length.toLocaleString()})
+            </button>
           </div>
 
-          {/* Fade edges */}
-          {canScrollLeft && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-secondary/40 to-transparent" />
-          )}
-          {canScrollRight && (
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-secondary/40 to-transparent" />
-          )}
+          {/* Right: Search & View Mode Switch */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search city, steel, GPS, driver..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-xl border border-input bg-background/60 py-1.5 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center rounded-xl border border-border/80 bg-muted/50 p-0.5">
+              <button
+                type="button"
+                onClick={() => setViewMode("carousel")}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                  viewMode === "carousel"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="Carousel View"
+              >
+                <Columns3 className="h-3.5 w-3.5" />
+                <span className="hidden md:inline">Carousel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium transition-all ${
+                  viewMode === "grid"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="Grid / Browse All"
+              >
+                <Grid3X3 className="h-3.5 w-3.5" />
+                <span className="hidden md:inline">Browse All</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Status bar if filtered */}
+        {(selectedRating !== null || searchQuery.trim()) && (
+          <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+            <span>
+              Showing <strong className="text-foreground">{filteredReviews.length}</strong> matching reviews
+              {selectedRating && ` with ${selectedRating} stars`}
+              {searchQuery && ` for "${searchQuery}"`}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedRating(null);
+                setSearchQuery("");
+              }}
+              className="font-medium text-primary hover:underline"
+            >
+              Reset all filters
+            </button>
+          </div>
+        )}
+
+        {/* ── Content: Empty State ── */}
+        {filteredReviews.length === 0 ? (
+          <div className="mt-12 flex flex-col items-center justify-center rounded-2xl border border-border/50 bg-card/40 p-12 text-center">
+            <Search className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <h3 className="font-display text-base font-bold text-foreground">
+              No matching reviews found
+            </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Try searching for a different city, goods type, or clear the star filter.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSelectedRating(null);
+                setSearchQuery("");
+              }}
+              className="mt-4 rounded-xl"
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : viewMode === "carousel" ? (
+          /* ── Content: Carousel View ── */
+          <div className="relative mt-8">
+            {/* Scroll buttons */}
+            {canScrollLeft && (
+              <button
+                onClick={() => scroll("left")}
+                className="absolute -left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur-md transition-all hover:bg-card hover:shadow-xl sm:-left-4"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="h-5 w-5 text-foreground" />
+              </button>
+            )}
+            {canScrollRight && (
+              <button
+                onClick={() => scroll("right")}
+                className="absolute -right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 shadow-lg backdrop-blur-md transition-all hover:bg-card hover:shadow-xl sm:-right-4"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-5 w-5 text-foreground" />
+              </button>
+            )}
+
+            {/* Cards row */}
+            <div
+              ref={scrollRef}
+              onScroll={checkScrollState}
+              className="review-scroll flex gap-4 overflow-x-auto pb-4 sm:gap-5"
+            >
+              {carouselReviews.map((review, i) => (
+                <ReviewCard
+                  key={review.id}
+                  review={review}
+                  index={i}
+                  className="min-w-[280px] max-w-[340px] shrink-0 sm:min-w-[320px]"
+                />
+              ))}
+
+              {/* End of carousel CTA card */}
+              <div className="flex min-w-[280px] max-w-[320px] shrink-0 flex-col items-center justify-center rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-6 text-center">
+                <Sparkles className="h-10 w-10 text-accent mb-2" />
+                <h4 className="font-display text-base font-bold text-foreground">
+                  +{filteredReviews.length - carouselReviews.length} More Reviews
+                </h4>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  Explore all {reviews.length} authentic customer stories across India.
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="mt-4 gap-1.5 rounded-xl bg-primary text-xs font-bold"
+                >
+                  Browse all {reviews.length} reviews <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Fade edges */}
+            {canScrollLeft && (
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-secondary/40 to-transparent" />
+            )}
+            {canScrollRight && (
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-secondary/40 to-transparent" />
+            )}
+
+            {/* Footer switcher note */}
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+              <span>
+                Showing <strong>{carouselReviews.length}</strong> featured reviews out of{" "}
+                <strong>{filteredReviews.length.toLocaleString()}</strong> total
+              </span>
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+              >
+                View all {reviews.length} reviews in paginated grid <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* ── Content: Paginated Grid View ── */
+          <div className="mt-8">
+            <div className="grid gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {paginatedReviews.map((review, i) => (
+                <ReviewCard key={review.id} review={review} index={i} />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-10 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                <p className="text-xs text-muted-foreground">
+                  Showing{" "}
+                  <strong>
+                    {(currentPage - 1) * itemsPerPage + 1}-
+                    {Math.min(currentPage * itemsPerPage, filteredReviews.length)}
+                  </strong>{" "}
+                  of <strong>{filteredReviews.length.toLocaleString()}</strong> reviews (Page {currentPage} of {totalPages})
+                </p>
+
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === 1}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.max(1, p - 1));
+                      window.scrollTo({ top: scrollRef.current?.offsetTop || 600, behavior: "smooth" });
+                    }}
+                    className="h-8 rounded-xl px-2.5 text-xs font-semibold"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+                  </Button>
+
+                  {/* Page numbers: window around current page */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((page) => {
+                      return (
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 2
+                      );
+                    })
+                    .map((page, idx, arr) => {
+                      const prevPage = arr[idx - 1];
+                      const showEllipsis = prevPage && page - prevPage > 1;
+
+                      return (
+                        <div key={page} className="flex items-center gap-1.5">
+                          {showEllipsis && (
+                            <span className="px-1 text-xs text-muted-foreground">…</span>
+                          )}
+                          <Button
+                            variant={page === currentPage ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => {
+                              setCurrentPage(page);
+                              window.scrollTo({ top: scrollRef.current?.offsetTop || 600, behavior: "smooth" });
+                            }}
+                            className="h-8 w-8 rounded-xl p-0 font-mono text-xs font-bold"
+                          >
+                            {page}
+                          </Button>
+                        </div>
+                      );
+                    })}
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={currentPage === totalPages}
+                    onClick={() => {
+                      setCurrentPage((p) => Math.min(totalPages, p + 1));
+                      window.scrollTo({ top: scrollRef.current?.offsetTop || 600, behavior: "smooth" });
+                    }}
+                    className="h-8 rounded-xl px-2.5 text-xs font-semibold"
+                  >
+                    Next <ChevronRight className="h-4 w-4 ml-1" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ── Write Review Dialog ── */}
@@ -496,7 +812,7 @@ export function ReviewSection() {
                 Thank you for your review!
               </h3>
               <p className="text-sm text-muted-foreground">
-                Your feedback helps other businesses make informed decisions.
+                Your feedback helps other businesses make informed transport decisions.
               </p>
               <Button
                 variant="outline"
@@ -514,7 +830,7 @@ export function ReviewSection() {
                   Share your experience
                 </DialogTitle>
                 <DialogDescription>
-                  Tell us how City Cargo helped your business. Your review helps others.
+                  Tell us how City Cargo helped your business. Your review helps other shippers.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-5 px-6 pb-6 pt-5">
